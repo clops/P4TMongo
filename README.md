@@ -15,7 +15,7 @@ This class is a layer above the MongoDB PHP Driver that implements most AdoDB fu
 First you need to initialize a connection:
 
     <?php
-		...
+  	...
         include_once('P4TMongo.class.php');
         $db = new P4TMongo('mongodb://user.password@localhost');
         $db->setDBName('myDatabase');
