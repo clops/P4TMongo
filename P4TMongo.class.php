@@ -1,12 +1,13 @@
 <?
     /***
      *
-     *  Class to make data access a bit easier for everyone happy to use
-     *  mongodb in their work.
+     *  P4TMongo is a PHP Class that mimics the popular AdoDB PHP Library. 
+     *  Use your favorite getOne, getRow, getAll, getCol and other commands with MongoDB
      *  
-     *  @author     ak
+     *  @author     Alexey Kulikov <a.kulikov@gmail.com>
+     *  @copyright  POOL4TOOL AG, Vienna, Austria
      *  @since      30.04.2011
-     *  @version    1.2
+     *  @version    0.9
      *
      ***/
     class P4TMongo extends Mongo{
@@ -14,9 +15,9 @@
         /***
          *  Default Database that this connection will reference
          ***/
-        public $db; //open all the default functions to the public as well
-        public $debug=false; //debug mode (not fully implemented in all functions yet)
-        public $default_upsert_state=false; //defaule upsert state
+        public $db; // open all the default functions to the public as well
+        public $debug=false; // debug mode (not fully implemented in all functions yet)
+        public $default_upsert_state=false; // defaule upsert state
         public $dbName;
         
         /***
