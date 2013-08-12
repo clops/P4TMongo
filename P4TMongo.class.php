@@ -6,8 +6,7 @@
      *  
      *  @author     Alexey Kulikov <a.kulikov@gmail.com>
      *  @copyright  POOL4TOOL AG, Vienna, Austria
-     *  @since      30.04.2011
-     *  @version    0.9
+     *  @version    1.2
      *
      ***/
     class P4TMongo extends Mongo{
@@ -15,9 +14,9 @@
         /***
          *  Default Database that this connection will reference
          ***/
-        public $db; // open all the default functions to the public as well
-        public $debug=false; // debug mode (not fully implemented in all functions yet)
-        public $default_upsert_state=false; // defaule upsert state
+        public $db; //open all the default functions to the public as well
+        public $debug=false; //debug mode (not fully implemented in all functions yet)
+        public $default_upsert_state=false; //default upsert state
         public $dbName;
         
         /***
@@ -88,8 +87,12 @@
          *
          *  @return array of arrays
          ***/
-        public function getAll($collection, Array $filter=array(), Array $order=array(), $start=null, $offset=null){
+        public function getAll($collection, Array $filter=array(), Array $order=array(), $start=null, $offset=null, $slaveOkay=true){
             $cursor = $this->db->$collection->find($filter)->limit((int)$start)->skip((int)$offset);  //SELECT * FROM $collection WHERE ^^^            
+            
+            if(!$slaveOkay){
+                $cursor->slaveOkay(false);
+            }
             
             if($order){
                 $cursor->sort($order);  //ORDER BY $order ASC
@@ -163,8 +166,8 @@
          *
          *  @return array representing one document (however complex it may be)
          ***/
-        public function getRow($collection, Array $filter=array(), Array $order=array()){
-            $result = $this->getAll($collection, $filter, $order, 1);
+        public function getRow($collection, Array $filter=array(), Array $order=array(), $slaveOkay=true){
+            $result = $this->getAll($collection, $filter, $order, 1, null, $slaveOkay);
             foreach($result as $obj){
                 return $obj;
             }
@@ -180,8 +183,8 @@
          *
          *  @return array representing one document (however complex it may be)
          ***/
-        public function getRowByID($collection, $id){
-            return $this->getRow($collection, array('_id' => new MongoId($id)));
+        public function getRowByID($collection, $id, $slaveOkay=true){
+            return $this->getRow($collection, array('_id' => new MongoId($id)), array(), $slaveOkay);
         }
         
         
@@ -402,6 +405,18 @@
             $this->debug('Admin Command Result: '.print_r($return, true));
             
             return $return;
+        }
+        
+        
+        /***
+         *  Executes raw Javascript code (whatever you want)
+         ***/
+        public function ExecuteJavaScript($code, $arguments=array(), $nolock=true){
+            //$code = new MongoCode($code);
+            $this->debug('Javascript Command Execution: <pre>'.print_r($code,true).'</pre>');
+            $result = $this->db->command(array('$eval'=>$code, 'args'=>$arguments), array('nolock'=>$nolock));
+            $this->debug('Result: '.print_r($result,true));
+            return $result;
         }
         
         
