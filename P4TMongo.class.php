@@ -202,11 +202,11 @@
             $return = array();
             if($val){ //it eez faster to have the IF outside of the loop
                 foreach($result as $obj){
-                    $return[$obj[$key]] = $obj[$val];
+                    $return[(string)$obj[$key]] = $obj[$val];
                 }
             }else{
                 foreach($result as $obj){
-                    $return[$obj[$key]] = $obj;
+                    $return[(string)$obj[$key]] = $obj;
                 }
             }
 
